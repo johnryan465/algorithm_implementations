@@ -4,7 +4,7 @@ typedef long long ll;
 typedef complex<double> point;
 point pivot;
 stack<point> convex_hull;
-const double PI = 3.141593654;
+const double PI = 3.141592654;
 #define x real()
 #define y imag()
 bool comp(point a, point b){
