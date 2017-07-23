@@ -11,7 +11,7 @@ struct seg_tree{
   }
 
   inline int indentiy(){return 0;}
-  inline int op(int a,int b){return a*b;}
+  inline int op(int a,int b){return max(a,b);}
   inline int left_child(int n){return 2*n;}
   inline int right_child(int n){return (2*n)+1;}
 
@@ -44,6 +44,7 @@ struct seg_tree{
     lazy_next(node,current_left==current_right);
     if(current_left > current_right || current_left > right_bound || current_right < left_bound){
       tree[node] = indentiy();
+      return;
     }
     if(current_left >= left_bound && current_right <= right_bound){
       tree[node] += update_data;
@@ -52,7 +53,6 @@ struct seg_tree{
         lazy_prop[right_child(node)] += update_data;
       }
     }
-
     if(current_left == current_right){
       data[current_left]+=update_data;
       tree[node] = data[current_left];
@@ -67,6 +67,9 @@ struct seg_tree{
 int main(){
   vector<int> nums = {1,2,3,4};
   seg_tree seg(nums);
-  seg.update(1,2,0,nums.size()-1,0,nums.size()-1);
+  seg.update(1,2,0,1,0,nums.size()-1);
   cout << seg.query(1,0,3,0,nums.size()-1) << endl;
+  for(int i = 0; i < nums.size(); i++){
+    cout << seg.data[i] << endl;
+  }
 }
