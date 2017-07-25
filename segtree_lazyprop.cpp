@@ -9,16 +9,15 @@ struct seg_tree{
     lazy_prop.resize(data.size() * 4);
     build(0,data.size()-1,1);
   }
-
   inline int indentiy(){return 0;}
-  inline int op(int a,int b){return max(a,b);}
+  inline int op(int a,int b){return a+b;}
   inline int left_child(int n){return 2*n;}
   inline int right_child(int n){return (2*n)+1;}
 
-  void lazy_next(int node,bool leaf){
+  void lazy_next(int node,int left, int right){
     if(lazy_prop[node] != 0){
-      tree[node] += lazy_prop[node];
-      if(leaf){
+      tree[node] += lazy_prop[node]*(right-left+1);
+      if(left != right){
         lazy_prop[left_child(node)] += lazy_prop[node];
         lazy_prop[right_child(node)] += lazy_prop[node];
       }
@@ -33,7 +32,7 @@ struct seg_tree{
 
   int query(int node, int left_bound, int right_bound, int current_left, int current_right){
     if(current_left > current_right || current_left > right_bound || current_right < left_bound)return indentiy();
-    lazy_next(node,current_left==current_right);
+    lazy_next(node,current_left,current_right);
     if(current_left >= left_bound && current_right <= right_bound)return tree[node];
     int l_ans = query(left_child(node),left_bound,right_bound,current_left,(current_right+current_left)/2);
     int r_ans = query(right_child(node),left_bound,right_bound,(current_right+current_left)/2 + 1,current_right);
@@ -41,10 +40,9 @@ struct seg_tree{
   }
 
   void update(int node, int update_data, int left_bound, int right_bound, int current_left, int current_right){
-    lazy_next(node,current_left==current_right);
+    lazy_next(node,current_left,current_right);
     if(current_left > current_right || current_left > right_bound || current_right < left_bound){
       tree[node] = indentiy();
-      return;
     }
     if(current_left >= left_bound && current_right <= right_bound){
       tree[node] += update_data;
@@ -63,13 +61,9 @@ struct seg_tree{
     tree[node] = op(tree[left_child(node)],tree[right_child(node)]);
   }
 };
-
 int main(){
-  vector<int> nums = {1,2,3,4};
+  vector<int> nums = {1,2,3,4,5,6,7,8,9};
   seg_tree seg(nums);
-  seg.update(1,2,0,1,0,nums.size()-1);
-  cout << seg.query(1,0,3,0,nums.size()-1) << endl;
-  for(int i = 0; i < nums.size(); i++){
-    cout << seg.data[i] << endl;
-  }
+  seg.update(1,-1,0,nums.size()-1,0,nums.size()-1);
+  cout << seg.query(1,0,nums.size()-1,0,nums.size()-1) << endl;
 }
